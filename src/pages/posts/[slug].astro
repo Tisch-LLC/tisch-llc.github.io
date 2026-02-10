@@ -1,0 +1,40 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatJapaneseDate, sortByPublishedAtDesc } from "../../utils/date";
+import { toPostPath, toPostSlug } from "../../utils/posts";
+
+type PostEntry = CollectionEntry<"posts">;
+
+export async function getStaticPaths() {
+  const posts = sortByPublishedAtDesc(await getCollection("posts"));
+
+  return posts.map((post) => ({
+    params: { slug: toPostSlug(post.id) },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: PostEntry };
+const { Content } = await post.render();
+const canonicalPath = toPostPath(post.id);
+---
+
+<BaseLayout
+  title={post.data.title}
+  pageType="article"
+  publishedAt={post.data.published_at}
+  modifiedAt={post.data.modified_at}
+  canonicalPath={canonicalPath}
+>
+  <div class="columns">
+    <div class="column is-8 is-offset-2 mx-2">
+      <div class="content is-medium">
+        <h3 class="subtitle is-5">{formatJapaneseDate(post.data.published_at)}</h3>
+        <h2 class="title is-4">{post.data.title}</h2>
+        <Content />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

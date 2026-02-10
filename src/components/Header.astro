@@ -1,0 +1,31 @@
+---
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/mission", label: "Mission" },
+  { href: "/services", label: "Services" },
+  { href: "/posts", label: "News" },
+  { href: "/about", label: "About" },
+];
+---
+
+<header>
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar" aria-label="main navigation">
+        <div class="site-nav">
+          {navItems.map((item) => (
+            <a class="navbar-item" href={item.href}>
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title">Tisch合同会社</h1>
+      <h2 class="subtitle">AI x 衛星データ × 不動産 で地域に新たな価値を創造</h2>
+    </div>
+  </div>
+</header>

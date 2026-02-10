@@ -1,0 +1,50 @@
+---
+import { getCollection } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatJapaneseDate, sortByPublishedAtDesc } from "../../utils/date";
+import { toPostPath } from "../../utils/posts";
+
+const posts = sortByPublishedAtDesc(await getCollection("posts"));
+---
+
+<BaseLayout
+  title="ニュース・プレスリリース"
+  pageType="webpage"
+  publishedAt="2020-06-15 13:00:00 +0900"
+  modifiedAt="2020-06-15 13:00:00 +0900"
+>
+  <div class="columns">
+    <div class="column is-10 is-offset-1">
+      <div class="columns featured-post is-multiline">
+        <div class="column is-12 post">
+          <article class="columns featured">
+            <div class="column is-6 featured-content va">
+              <div>
+                <h2 class="post-title">ニュース・プレスリリース</h2>
+                <ul>
+                  {posts.map((post) => (
+                    <li>
+                      {formatJapaneseDate(post.data.published_at)}
+                      <a href={toPostPath(post.id)}> {post.data.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div class="column is-6 post-img">
+              <img
+                class="responsive-image"
+                src="/images/news.png"
+                alt="新聞を読む女性"
+                width="1000"
+                height="912"
+                loading="lazy"
+              />
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

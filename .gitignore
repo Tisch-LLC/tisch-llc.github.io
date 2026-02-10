@@ -1,4 +1,11 @@
+# Dependencies
+node_modules
+
+# Build artifacts
+.astro
+dist
+
+# Legacy Jekyll artifacts
+_site
+.sass-cache
 .jekyll-metadata
-_site/*
-.sass-cache/*
-node_modules/*

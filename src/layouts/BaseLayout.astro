@@ -1,0 +1,170 @@
+---
+import "../styles/global.css";
+
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE } from "../site";
+import { toIsoDate } from "../utils/date";
+
+type PageType = "website" | "webpage" | "article";
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageType?: PageType;
+  canonicalPath?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  pageType = "website",
+  canonicalPath,
+  publishedAt,
+  modifiedAt,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${SITE.title}` : SITE.title;
+const pathname = canonicalPath ?? Astro.url.pathname;
+const canonicalUrl = new URL(pathname, SITE.url).toString();
+const logoUrl = new URL(SITE.logoPath, SITE.url).toString();
+const publishedIso = toIsoDate(publishedAt);
+const modifiedIso = toIsoDate(modifiedAt) ?? publishedIso;
+
+let structuredData: Record<string, unknown>;
+
+if (pageType === "article") {
+  structuredData = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    headline: title,
+    image: [logoUrl],
+    datePublished: publishedIso,
+    dateModified: modifiedIso,
+    author: {
+      "@type": "Organization",
+      name: SITE.author,
+    },
+    description,
+    url: canonicalUrl,
+    publisher: {
+      "@type": "Organization",
+      name: SITE.author,
+      logo: {
+        "@type": "ImageObject",
+        url: logoUrl,
+      },
+    },
+  };
+} else if (pageType === "webpage") {
+  structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    headline: title,
+    image: [logoUrl],
+    datePublished: publishedIso,
+    dateModified: modifiedIso,
+    author: {
+      "@type": "Organization",
+      name: SITE.author,
+    },
+    description,
+    url: canonicalUrl,
+    publisher: {
+      "@type": "Organization",
+      name: SITE.author,
+      logo: {
+        "@type": "ImageObject",
+        url: logoUrl,
+      },
+    },
+  };
+} else {
+  structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE.title,
+    image: [logoUrl],
+    url: SITE.url,
+    description: SITE.description,
+  };
+}
+---
+
+<!doctype html>
+<html lang={SITE.language}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <link href="https://fonts.googleapis.com/css?family=Sawarabi+Gothic" rel="stylesheet" />
+    <link
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+
+    <title>{fullTitle}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={logoUrl} />
+
+    <meta property="og:type" content={pageType === "article" ? "article" : "website"} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={SITE.title} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={logoUrl} />
+
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    ></script>
+
+    {SITE.googleAnalyticsId && (
+      <>
+        <script
+          is:inline
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${SITE.googleAnalyticsId}`}
+        ></script>
+        <script is:inline define:vars={{ googleAnalyticsId: SITE.googleAnalyticsId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag("js", new Date());
+          gtag("config", googleAnalyticsId);
+        </script>
+      </>
+    )}
+
+    {SITE.googleAdsenseId && (
+      <script
+        is:inline
+        async
+        crossorigin="anonymous"
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${SITE.googleAdsenseId}`}
+      ></script>
+    )}
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

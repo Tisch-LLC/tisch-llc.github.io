@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Mission"
+  pageType="webpage"
+  publishedAt="2020-06-15 13:00:00 +0900"
+  modifiedAt="2020-06-15 13:00:00 +0900"
+>
+  <div class="columns">
+    <div class="column is-10 is-offset-1">
+      <div class="columns featured-post is-multiline">
+        <div class="column is-12 post">
+          <article class="columns featured">
+            <div class="column is-6 featured-content va">
+              <div>
+                <h2 class="post-title">幸せな街作り</h2>
+                <p class="post-excerpt">
+                  "幸福"という計測のしにくいものでも、データを用いることで見える化し、<br />
+                  より多くの人が幸せに暮らせる街作りを目指します。
+                </p>
+              </div>
+            </div>
+            <div class="column is-6 post-img">
+              <img
+                class="responsive-image"
+                src="/images/mission.png"
+                alt="雨に唄う女性"
+                width="1000"
+                height="800"
+                loading="lazy"
+              />
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
