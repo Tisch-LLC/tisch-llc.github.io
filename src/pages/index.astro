@@ -1,5 +1,11 @@
 ---
+import { getCollection } from "astro:content";
+
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatJapaneseDate, sortByPublishedAtDesc } from "../utils/date";
+import { toPostPath } from "../utils/posts";
+
+const latestPosts = sortByPublishedAtDesc(await getCollection("posts")).slice(0, 3);
 ---
 
 <BaseLayout>
@@ -31,6 +37,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 </p>
               </div>
             </div>
+          </article>
+        </div>
+        <div class="column is-12 post">
+          <article class="featured">
+            <h2 class="post-title">最新のお知らせ</h2>
+            <ul>
+              {latestPosts.map((post) => (
+                <li>
+                  {formatJapaneseDate(post.data.published_at)}
+                  <a href={toPostPath(post.id)}> {post.data.title}</a>
+                </li>
+              ))}
+            </ul>
+            <p class="mt-2"><a href="/posts">ニュース一覧へ</a></p>
           </article>
         </div>
       </div>
