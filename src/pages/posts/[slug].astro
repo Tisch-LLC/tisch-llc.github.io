@@ -1,5 +1,5 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatJapaneseDate, sortByPublishedAtDesc } from "../../utils/date";
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: PostEntry };
-const { Content } = await post.render();
+const { Content } = await render(post);
 const canonicalPath = toPostPath(post.id);
 ---
 
